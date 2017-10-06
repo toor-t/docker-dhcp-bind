@@ -1,0 +1,48 @@
+#!/bin/ash
+set -e
+
+BIND_DATA_DIR=/data/bind
+DHCP_DATA_DIR=/data/dhcp
+
+BIND_USER=named
+
+for SRV_DIR in "bind" "dhcp"
+do
+  mkdir -p /data/${SRV_DIR}
+
+  # populate default configuration if it does not exist
+  if [ ! -d /data/${SRV_DIR}/etc ]; then
+    cp -rp /etc/${SRV_DIR} /data/${SRV_DIR}/etc
+  fi
+  rm -rf /etc/${SRV_DIR}
+  ln -sf /data/${SRV_DIR}/etc /etc/${SRV_DIR}
+  chmod -R 0775 /data/${SRV_DIR}
+  
+  # bind
+  if [ ${SRV_DIR} = bind ]; then 
+    chown -R ${BIND_USER}:${BIND_USER} ${BIND_DATA_DIR}
+
+    if [ ! -d ${BIND_DATA_DIR}/lib ]; then
+        mkdir -p ${BIND_DATA_DIR}/lib
+        cp -rp /var/bind/* ${BIND_DATA_DIR}/lib/
+        chown -R root:${BIND_USER} ${BIND_DATA_DIR}/lib
+    fi
+    rm -rf /var/bind
+    ln -sf ${BIND_DATA_DIR}/lib /var/bind
+  fi
+
+  # dhcp
+  if [ ${SRV_DIR} = dhcp ]; then
+    if [ ! -d ${DHCP_DATA_DIR}/lib ]; then
+        mkdir -p ${DHCP_DATA_DIR}/lib
+    fi
+    rm -rf /var/lib/dhcp
+    ln -sf ${DHCP_DATA_DIR}/lib /var/lib/dhcp
+  fi
+done
+
+rc-update add rsyslog
+rc-service rsyslog start
+
+rc-update add dhcpd
+rc-update add named

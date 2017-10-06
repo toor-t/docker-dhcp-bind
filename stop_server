@@ -1,0 +1,4 @@
+#!/bin/sh
+
+rc-service dhcpd stop
+rc-service named stop

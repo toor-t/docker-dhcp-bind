@@ -1,0 +1,4 @@
+#!/bin/sh
+
+rc-service dhcpd start
+rc-service named start
