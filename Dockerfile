@@ -14,7 +14,8 @@ RUN	apk update && apk add --no-cache openrc &&\
 	apk add --no-cache rsyslog bind dhcp &&\
 	chmod u+x /sbin/init_config &&\
 	chmod u+x /sbin/start_server &&\
-	chmod u+x /sbin/stop_server
+	chmod u+x /sbin/stop_server &&\
+	rm -rf /tmp/* /var/cache/apk/*
 
 VOLUME [ "/data" ]
 

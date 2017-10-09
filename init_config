@@ -5,6 +5,7 @@ BIND_DATA_DIR=/data/bind
 DHCP_DATA_DIR=/data/dhcp
 
 BIND_USER=named
+DHCP_USER=dhcp
 
 for SRV_DIR in "bind" "dhcp"
 do
@@ -33,8 +34,11 @@ do
 
   # dhcp
   if [ ${SRV_DIR} = dhcp ]; then
+    chown -R ${DHCP_USER}:${DHCP_USER} ${DHCP_DATA_DIR}
+
     if [ ! -d ${DHCP_DATA_DIR}/lib ]; then
         mkdir -p ${DHCP_DATA_DIR}/lib
+        chown -R ${DHCP_USER}:${DHCP_USER} ${DHCP_DATA_DIR}/lib
     fi
     rm -rf /var/lib/dhcp
     ln -sf ${DHCP_DATA_DIR}/lib /var/lib/dhcp
