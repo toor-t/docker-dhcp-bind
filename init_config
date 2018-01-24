@@ -45,6 +45,12 @@ do
   fi
 done
 
+# log
+mkdir -p /data/log
+rm -rf /var/log
+ln -sf /data/log /var/log
+
+# 
 rc-update add rsyslog
 rc-service rsyslog start
 
